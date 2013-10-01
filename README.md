@@ -1,3 +1,8 @@
+UrLab/api est une API web pour gérer le hackerspace.
+Elle permettra de récupérer plein d'infos sur le status physique du hackerspace et lui fournir des ordres (domotique)
+
+UrLab/api est fortement lié à UrLab/hal qui sera le contrôleur (surement un arduino relié à un RPi) qui exécutera les ordres de l'api et qui lui renverra des données
+
 Install:
 ---------
 
