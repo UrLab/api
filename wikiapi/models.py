@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
 
@@ -16,12 +16,15 @@ import json
 
 QUERY_URL = "http://wiki.urlab.be/api.php?action=ask&query="
 
+
 class WikiManager(models.Manager):
+
     def get_query_set(self):
         return WikiQuerySet(self.model)
 
     def __getattr__(self, name):
         return getattr(self.get_query_set(), name)
+
 
 class WikiQuerySet(object):
 
@@ -31,7 +34,7 @@ class WikiQuerySet(object):
         self._order = None
 
     def all(self):
-        q = EventQuerySet(self.model)
+        q = WikiQuerySet(self.model)
         q._order = self._order
         return q
 
@@ -89,14 +92,15 @@ class WikiQuerySet(object):
         clone._order = map(lambda (order, key): (not order,key), self._order)
 
         return clone
-
+        
     def order_by(self, *fields):
         if self._result != None :
             raise Exception('Cannot order a query once it has been executed.')
         clone = self.all()
         if self._order is None:
             clone._order = []
-        fields = map(lambda x: (x[0] != "-",x[1:] if x[0] == "-" else x),fields)
+        fields = map(lambda x: (x[0] != "-", x[1:] if x[0] == "-" else x),
+            fields)
         clone._order += fields
 
         return clone
