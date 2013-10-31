@@ -7,6 +7,13 @@ import requests
 import collections
 import json
 
+# TODO :
+# support .exclude filters
+# support slicing
+# if queries return > 50 elements, fetch the rest
+# cache http requests
+# support > < <= >= filters
+
 QUERY_URL = "http://wiki.urlab.be/api.php?action=ask&query="
 
 class WikiManager(models.Manager):
