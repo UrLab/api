@@ -11,7 +11,6 @@ from django.conf import settings
 # TODO :
 # support .exclude filters
 # support slicing
-# if queries return > 50 elements, fetch the rest
 # cache http requests
 # support > < <= >= filters
 
@@ -26,10 +25,14 @@ class WikiManager(models.Manager):
 
 class WikiQuerySet(object):
 
-    def __init__(self, model=None, query="", using=None):
+    def __init__(self, model=None, query={}, using=None):
         self.model = model
-        self._result = None
-        self._order = None
+        self.query = query
+        self.executed = False
+
+        self._cache = []
+        self._cache_full = False
+
         if using is None:
             try:
                 using = settings.DATABASES['semantic']['NAME']
@@ -41,14 +44,12 @@ class WikiQuerySet(object):
         self.using = using
 
     def all(self):
-        q = WikiQuerySet(model=self.model, using=self.using)
-        q._order = self._order
-        return q
+        return WikiQuerySet(model=self.model, query=self.query, using=self.using)
 
-    def _request_crafter(self):
-        if self._order:
+    def _request_crafter(self, i):
+        if self.query.has_key('order'):
             sort, order = [], []
-            for conventional, col in self._order:
+            for conventional, col in self.query['order']:
                 sign = "ASC" if conventional else "DESC"
                 order.append(sign)
                 sort.append(col)
@@ -60,63 +61,46 @@ class WikiQuerySet(object):
 
         columns_str = ''.join(map(lambda x: "|?"+x, columns))
 
-        return "{domain}[[Category:{model}]]{sort}{columns}&format=json".format(
+        return "{domain}[[Category:{model}]]{sort}{columns}|offset={offset}&format=json".format(
             domain=self.using,
             sort=sort_str,
             model=self.model._meta.object_name,
-            columns=columns_str
+            columns=columns_str,
+            offset=i
         )
 
     def _deserialize(self, text):
         return json.loads(text, object_pairs_hook=collections.OrderedDict, encoding='unicode_escape')
 
     @property
-    def result(self):
-        if not self._result:
-            url = self._request_crafter()
-            response = self._deserialize(requests.get(url).text)['query']['results']
-
-            self._result = []
-            for key, item in response.iteritems():
-                new_item = {}
-                new_item['key'] = ':'.join(key.split(':')[1:])
-                new_item['url'] = item['fullurl']
-                for colum, value in item['printouts'].iteritems():
-                    new_item[colum] = value
-                self._result.append(new_item)
-
-        return self._result
-
-    @property
     def ordered(self):
-        return not self._order is None
+        return self.query.has_key('order')
 
     def reverse(self):
         # TODO : Check if query if done
-        if self._order is None :
+        if not self.ordered:
             raise Exception('Cannot reverse non-ordered query.')
         clone = self.all()
-        clone._order = map(lambda (order, key): (not order,key), self._order)
+        clone.query['order'] = map(lambda (order, key): (not order,key), self.query['order'])
 
         return clone
 
     def order_by(self, *fields):
-        if self._result != None :
+        if self.executed :
             raise Exception('Cannot order a query once it has been executed.')
         clone = self.all()
-        if self._order is None:
-            clone._order = []
+        if not self.ordered:
+            clone.query['order'] = []
         fields = map(lambda x: (x[0] != "-", x[1:] if x[0] == "-" else x),
             fields)
-        clone._order += fields
+        clone.query['order'] += fields
 
         return clone
 
-    def count(self):
-        c = len(self.result)
-        if c >= 50:
-            return -1
-        return len(self.result)
+    def __len__(self):
+        return len(list(self.iterator()))
+
+    count = __len__
 
     def get(self, *args, **kwargs):
         clone = self.filter(*args, **kwargs)
@@ -131,11 +115,39 @@ class WikiQuerySet(object):
             "get() returned more than one %s -- it returned %s!" %
             (self.model._meta.object_name, num))
     
-    def iterator(self):
-        for item in self.result:
-            yield self._create_model(item)
+    def iterator(self, ):
+        i = 0
+        if not self.executed:
+            self.executed = True
+            end = False
+        else:
+            for elem in self._cache:
+                i += 1
+                yield elem
 
-    __iter__ = iterator 
+        if not self._cache_full:
+            while not end:
+                url = self._request_crafter(i=i)
+                j = self._deserialize(requests.get(url).text)
+                response = j['query']['results']
+
+                end = not j.has_key('query-continue')
+
+                for key, item in response.iteritems():
+                    i += 1
+                    new_item = {}
+                    new_item['key'] = ':'.join(key.split(':')[1:])
+                    new_item['url'] = item['fullurl']
+                    for colum, value in item['printouts'].iteritems():
+                        new_item[colum] = value
+                    
+                    obj =  self._create_model(new_item)
+                    self._cache.append(obj)
+
+                    yield obj
+        self._cache_full = True
+
+    __iter__ = iterator
 
     def _create_model(self, line):
         fields = filter(lambda x: not x.db_column is None, self.model._meta.fields)
@@ -145,7 +157,7 @@ class WikiQuerySet(object):
         return self.model(name=line['key'], url=line['url'], **cols)
 
     def filter(self, *args, **kwargs):
-        if self._result != None :
+        if self.executed :
             raise Exception('Cannot filter a query once it has been executed.')
 
         clone = self.all()
