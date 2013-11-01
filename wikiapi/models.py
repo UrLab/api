@@ -69,6 +69,11 @@ class WikiQuerySet(object):
             offset=i
         )
 
+    def _http(self, url):
+        print "R = {} ".format(url)
+        # Insert cache here
+        return requests.get(url)
+
     def _deserialize(self, text):
         return json.loads(text, object_pairs_hook=collections.OrderedDict, encoding='unicode_escape')
 
@@ -128,7 +133,7 @@ class WikiQuerySet(object):
         if not self._cache_full:
             while not end:
                 url = self._request_crafter(i=i)
-                j = self._deserialize(requests.get(url).text)
+                j = self._deserialize(self._http(url).text)
                 response = j['query']['results']
 
                 end = not j.has_key('query-continue')
