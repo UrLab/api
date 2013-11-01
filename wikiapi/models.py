@@ -109,6 +109,7 @@ class WikiQuerySet(object):
 
     def get(self, *args, **kwargs):
         clone = self.filter(*args, **kwargs)
+        # Should be len(clone[:2]) 
         num = len(clone)
         if num == 1:
             return clone._create_model(clone.result[0])
@@ -120,7 +121,7 @@ class WikiQuerySet(object):
             "get() returned more than one %s -- it returned %s!" %
             (self.model._meta.object_name, num))
     
-    def iterator(self, ):
+    def iterator(self):
         i = 0
         if not self.executed:
             self.executed = True
@@ -153,6 +154,10 @@ class WikiQuerySet(object):
         self._cache_full = True
 
     __iter__ = iterator
+
+    def __getitem__(self, k):
+        # TODO : FIX THIS !!! Should not get everything !
+        return list(self).__getitem__(k)
 
     def _create_model(self, line):
         fields = filter(lambda x: not x.db_column is None, self.model._meta.fields)
