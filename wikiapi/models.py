@@ -6,6 +6,7 @@ from django.db import models
 import requests
 import collections
 import json
+from django.conf import settings
 
 # TODO :
 # support .exclude filters
@@ -13,9 +14,6 @@ import json
 # if queries return > 50 elements, fetch the rest
 # cache http requests
 # support > < <= >= filters
-
-QUERY_URL = "http://wiki.urlab.be/api.php?action=ask&query="
-
 
 class WikiManager(models.Manager):
 
@@ -32,9 +30,18 @@ class WikiQuerySet(object):
         self.model = model
         self._result = None
         self._order = None
+        if using is None:
+            try:
+                using = settings.DATABASES['semantic']['NAME']
+            except KeyError:
+                raise Exception("No API selected. You should either add an api url in settings.DATABASES['semantic']['NAME']"
+                    + " or specify an url with the 'using' parameter "
+                    + "(eg: Model.objects.all(using='http://wiki.urlab.be/api.php?action=ask&query=')) ")
+
+        self.using = using
 
     def all(self):
-        q = WikiQuerySet(self.model)
+        q = WikiQuerySet(model=self.model, using=self.using)
         q._order = self._order
         return q
 
@@ -54,7 +61,7 @@ class WikiQuerySet(object):
         columns_str = ''.join(map(lambda x: "|?"+x, columns))
 
         return "{domain}[[Category:{model}]]{sort}{columns}&format=json".format(
-            domain=QUERY_URL,
+            domain=self.using,
             sort=sort_str,
             model=self.model._meta.object_name,
             columns=columns_str
@@ -92,7 +99,7 @@ class WikiQuerySet(object):
         clone._order = map(lambda (order, key): (not order,key), self._order)
 
         return clone
-        
+
     def order_by(self, *fields):
         if self._result != None :
             raise Exception('Cannot order a query once it has been executed.')
