@@ -1,0 +1,27 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<head>
+    <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet" media="screen" />
+    <script src="{% static "jquery.min.js" %}"></script>
+    <script src="{% static "highcharts.js" %}"></script>
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    {% load chartit %}
+    {{ weatherchart|load_charts:"graph" }}
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Meteo @ UrLab</a>
+          <div class="nav-collapse collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid">
+    	<div id="graph" class="hero-unit"/>
+    </div>
+</body>
