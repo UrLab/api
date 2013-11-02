@@ -1,11 +1,15 @@
 from django.conf.urls import patterns, include, url
 
-# Uncomment the next two lines to enable the admin:
-# from django.contrib import admin
-# admin.autodiscover()
+from rest_framework import routers
+from wiki import views
+
+router = routers.DefaultRouter()
+router.register(r'events', views.EventViewSet)
+
 
 urlpatterns = patterns('',
     url(r'^music/', include('music.urls')),
+    url(r'^', include(router.urls))
     # Examples:
     # url(r'^$', 'api.views.home', name='home'),
     # url(r'^api/', include('api.foo.urls')),
