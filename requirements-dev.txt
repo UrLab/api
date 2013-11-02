@@ -1,0 +1,7 @@
+Django>=1.5
+python-mpd2
+requests
+git+git://github.com/dcramer/django-devserver#egg=django-devserver
+ipython
+django_chartit
+simplejson
