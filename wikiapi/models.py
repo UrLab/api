@@ -46,6 +46,8 @@ class WikiQuerySet(object):
     def all(self):
         return WikiQuerySet(model=self.model, query=self.query, using=self.using)
 
+    _clone = all
+
     def _request_crafter(self, i):
         if self.query.has_key('order'):
             sort, order = [], []
@@ -125,19 +127,19 @@ class WikiQuerySet(object):
         i = 0
         if not self.executed:
             self.executed = True
-            end = False
+            self.end = False
         else:
             for elem in self._cache:
                 i += 1
                 yield elem
 
         if not self._cache_full:
-            while not end:
+            while not self.end:
                 url = self._request_crafter(i=i)
                 j = self._deserialize(self._http(url).text)
                 response = j['query']['results']
 
-                end = not j.has_key('query-continue')
+                self.end = not j.has_key('query-continue')
 
                 for key, item in response.iteritems():
                     i += 1
