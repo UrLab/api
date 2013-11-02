@@ -178,8 +178,15 @@ class WikiQuerySet(object):
             clone.query += "[[{}:{}]]".format(key, val)
         return clone
 
+class WikiCharField(models.CharField):
+
+    def __init__(self, *args, **kwargs):
+        kwargs['max_length'] = 500
+        super(WikiCharField, self).__init__(*args, **kwargs)
+
 class WikiModel(models.Model):
     objects = WikiManager()
 
     class Meta:
         abstract = True
+        managed = False
