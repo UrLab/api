@@ -3,3 +3,4 @@ python-mpd2
 requests
 django_chartit
 simplejson
+puka
