@@ -3,7 +3,7 @@ from datetime import datetime
 from time import time
 
 class Light(models.Model):
-	ltstamp = models.IntegerField(primary_key=True)
+	ltstamp = models.BigIntegerField(primary_key=True)
 	inside = models.DecimalField(max_digits=4, decimal_places=1)
 	outside = models.DecimalField(max_digits=4, decimal_places=1)
 
@@ -16,7 +16,7 @@ class Light(models.Model):
 
 
 class Temperature(models.Model):
-	ttstamp = models.IntegerField(primary_key=True)
+	ttstamp = models.BigIntegerField(primary_key=True)
 	ambiant = models.DecimalField(max_digits=4, decimal_places=1)
 	radiator = models.DecimalField(max_digits=4, decimal_places=1)
 
