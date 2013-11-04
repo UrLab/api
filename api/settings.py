@@ -116,10 +116,13 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'chartit',
+    'devserver',
     'music',
-    'wiki',
+    #'wiki',
     'wikiapi',
     'rest_framework',
+    'meteo',
     # Uncomment the next line to enable the admin:
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -160,3 +163,8 @@ LOGGING = {
         },
     }
 }
+
+try:
+    from settings_prod import *
+except ImportError:
+    pass

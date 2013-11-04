@@ -2,3 +2,6 @@ Django>=1.5
 python-mpd2
 requests
 djangorestframework
+django_chartit
+simplejson
+puka

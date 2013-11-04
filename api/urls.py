@@ -9,7 +9,8 @@ router.register(r'events', views.EventViewSet)
 
 urlpatterns = patterns('',
     url(r'^music/', include('music.urls')),
-    url(r'^', include(router.urls))
+    url(r'^', include(router.urls)),
+    url(r'^meteo/', include('meteo.urls')),
     # Examples:
     # url(r'^$', 'api.views.home', name='home'),
     # url(r'^api/', include('api.foo.urls')),
@@ -20,3 +21,4 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # url(r'^admin/', include(admin.site.urls)),
 )
+ 
