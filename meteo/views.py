@@ -3,18 +3,25 @@
 from django.shortcuts import render_to_response
 import simplejson as json
 
+from .utils import ISOtime2JStstamp
 from .models import Light, Temperature
 from chartit import DataPool, Chart
 
 def view_weather(request):
+    filters = {}
+    if 'from' in request.GET:
+        filters['pk__gte'] = ISOtime2JStstamp(request.GET['from'])
+    if 'to' in request.GET:
+        filters['pk__lte'] = ISOtime2JStstamp(request.GET['to'])
+
     #Step 1: Create a DataPool with the data we want to retrieve.
     weatherdata = DataPool(
         series=[{
-        	'options': {'source': Light.objects.all()},
+        	'options': {'source': Light.objects.filter(**filters)},
             'terms': ['ltstamp', 'inside', 'outside']
         },
         {
-        	'options': {'source': Temperature.objects.all()},
+        	'options': {'source': Temperature.objects.filter(**filters)},
             'terms': ['ttstamp', 'ambiant', 'radiator']
         }]
     )
