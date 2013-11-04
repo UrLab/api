@@ -49,9 +49,11 @@ class Command(BaseCommand):
                             radiator=data['temperature']['radiator']
                         )
                         self.log('Received Temperature')
+                except ValueError as err:
+                    self.log("Malformed message '{body}\nExecption is {err}'".format(body=result["body"], err=err))
                 except Exception as err:
-                    print err
-                    self.log("Malformed message '%s'"%(result["body"]))
+                    self.log('%s: %s'%(err.__class__, err))
+
                 self.client.basic_ack(result)
 
         except Exception as err:
