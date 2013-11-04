@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 from rest_framework import routers
 from wiki import views
@@ -22,3 +23,4 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
 )
  
+urlpatterns += staticfiles_urlpatterns()
