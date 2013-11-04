@@ -10,11 +10,15 @@ FORMATS = (
 	'%Y-%m'
 )
 
+def datetime2JStstamp(time):
+	return 1000*mktime(time.timetuple())
+
+
 def ISOtime2JStstamp(timestr):
 	for fmt in FORMATS:
 		try:
 			time = datetime.strptime(timestr, fmt)
-			return 1000*mktime(time.timetuple())
+			return datetime2JStstamp(time)
 		except:
 			pass
 	raise ValueError
