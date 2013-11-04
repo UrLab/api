@@ -15,7 +15,8 @@
           <a class="brand" href="#">Meteo @ UrLab</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
+              <li><a href="{% url "weather_today" %}">Today</a></li>
+              <li><a href="{% url "weather_thisweek" %}">This week</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
