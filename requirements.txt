@@ -5,3 +5,4 @@ djangorestframework
 django_chartit
 simplejson
 puka
+pytz
