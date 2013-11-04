@@ -8,9 +8,14 @@ from .utils import ISOtime2JStstamp, datetime2JStstamp
 from .models import Light, Temperature
 from chartit import DataPool, Chart
 
-def today(requet):
+def today(request):
     now = datetime.now()
     url = reverse('weather')+'?from='+str(now-timedelta(1))+'&to='+str(now)
+    return redirect(url)
+
+def thisweek(request):
+    now = datetime.now()
+    url = reverse('weather')+'?from='+str(now-timedelta(7))+'&to='+str(now)
     return redirect(url)
 
 def weather(request):

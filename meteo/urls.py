@@ -6,5 +6,7 @@ from django.conf.urls import patterns, include, url
 
 urlpatterns = patterns('',
     url(r'^$', 'meteo.views.today', name='weather_today'),
+    url(r'^today$', 'meteo.views.today', name='weather_today'),
+    url(r'^thisweek$', 'meteo.views.thisweek', name='weather_thisweek'),
     url(r'^view$', 'meteo.views.weather', name='weather'),
 )
