@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
-
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, redirect
+from django.core.urlresolvers import reverse
 import simplejson as json
+from datetime import datetime, timedelta
 
-from .utils import ISOtime2JStstamp
+from .utils import ISOtime2JStstamp, datetime2JStstamp
 from .models import Light, Temperature
 from chartit import DataPool, Chart
 
-def view_weather(request):
+def today(requet):
+    now = datetime.now()
+    url = reverse('weather')+'?from='+str(now-timedelta(1))+'&to='+str(now)
+    return redirect(url)
+
+def weather(request):
     filters = {}
     if 'from' in request.GET:
         filters['pk__gte'] = ISOtime2JStstamp(request.GET['from'])
@@ -45,8 +51,8 @@ def view_weather(request):
             	'minTickInterval': 10000
             },
             'yAxis': [
-    			{'title' : {'text': "Light (%)"}},
-    			{'opposite': True, 'title': {'text': "Temperature (°C)"}}
+    			{'title' : {'text': "Light (%)"}, 'color': '#CC3'},
+    			{'opposite': True, 'title': {'text': "Temperature (°C)"}, 'color': '#33C'}
   			]
         }
     )
