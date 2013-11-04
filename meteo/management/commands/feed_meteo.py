@@ -1,12 +1,8 @@
 from datetime import datetime
-from time import mktime
 import puka
 import simplejson as json
 from meteo.models import Temperature, Light
-
-def ISOtime2JStstamp(timestr):
-    time = datetime.strptime(timestr, '%Y-%m-%d %H:%M:%S.%f')
-    return 1000*mktime(time.timetuple())
+from meteo.utils import ISOtime2JStstamp
 
 from django.core.management.base import BaseCommand
 class Command(BaseCommand):
