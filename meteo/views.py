@@ -44,5 +44,11 @@ def view_weather(request):
         }
     )
 
+    last_light = Light.objects.all().order_by('-ltstamp')[0]
+    last_temp = Temperature.objects.all().order_by('-ttstamp')[0]
+
     #Step 3: Send the chart object to the template.
-    return render_to_response('graf.html', {'weatherchart': cht})
+    return render_to_response('graf.html', {
+        'weatherchart': cht,
+        'light': last_light, 'temp': last_temp
+    })
