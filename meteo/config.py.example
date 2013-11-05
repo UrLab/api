@@ -1,0 +1,2 @@
+AMQ_SERVER = "amqp://localhost/"
+AMQ_QUEUE = "api.meteo.feed"
