@@ -15,7 +15,8 @@
           <a class="brand" href="#">Meteo @ UrLab</a>
           <div class="nav-collapse collapse">
             <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
+              <li><a href="{% url "weather_today" %}">Today</a></li>
+              <li><a href="{% url "weather_thisweek" %}">This week</a></li>
             </ul>
           </div><!--/.nav-collapse -->
         </div>
@@ -23,5 +24,21 @@
     </div>
     <div class="container-fluid">
     	<div id="graph" class="hero-unit"/>
+    </div>
+    <div class="row fluid">
+      <div class="span3">
+        <h3>Light</h3>
+        <dl>
+          <dt>Inside</dt><dd>{{light.inside}} %</dd>
+          <dt>Outside</dt><dd>{{light.outside}} %</dd>
+        </dl>
+      </div>
+      <div class="span3">
+        <h3>Temperature</h3>
+        <dl>
+          <dt>Ambiant</dt><dd>{{temp.ambiant}} &deg;C</dd>
+          <dt>Radiator</dt><dd>{{temp.radiator}} &deg;C</dd>
+        </dl>
+      </div>
     </div>
 </body>

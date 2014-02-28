@@ -1,0 +1,16 @@
+#Site-specific configuration
+AMQ_USER = ''
+AMQ_PASSWORD = ''
+AMQ_HOST = ''
+AMQ_VHOST = ''
+
+#URL compilation
+AMQ_AUTH = ''
+if AMQ_USER:
+	AMQ_AUTH = AMQ_USER
+	if AMQ_PASSWORD:
+		AMQ_AUTH += ':'+AMQ_PASSWORD
+	AMQ_AUTH += '@'
+AMQ_SERVER = "amqp://%s%s/%s"%(AMQ_AUTH, AMQ_HOST, AMQ_VHOST)
+
+AMQ_QUEUE = "api.meteo.feed"

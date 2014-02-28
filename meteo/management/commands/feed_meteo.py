@@ -1,35 +1,30 @@
 from datetime import datetime
-from time import mktime
 import puka
 import simplejson as json
 from meteo.models import Temperature, Light
-
-def ISOtime2JStstamp(timestr):
-    time = datetime.strptime(timestr, '%Y-%m-%d %H:%M:%S.%f')
-    return 1000*mktime(time.timetuple())
-
+from meteo.utils import ISOtime2JStstamp
 from django.core.management.base import BaseCommand
+from meteo.config import AMQ_SERVER, AMQ_QUEUE
+
 class Command(BaseCommand):
-    SERVER = "amqp://localhost/"
-    QUEUE = "api.meteo.feed"
     help = """Feed weather data"""
 
     def log(self, msg):
         self.stdout.write("[%s] %s"%(str(datetime.now()), msg))
 
     def handle(self, *args, **options):
-        self.client = puka.Client(self.SERVER)
+        self.client = puka.Client(AMQ_SERVER)
 
         try:
             promise = self.client.connect()
             self.client.wait(promise)
-            self.log("Connected to %s"%(self.SERVER))
+            self.log("Connected to %s"%(AMQ_SERVER))
 
-            promise = self.client.queue_declare(queue=self.QUEUE)
+            promise = self.client.queue_declare(queue=AMQ_QUEUE)
             self.client.wait(promise)
-            self.log("Got queue %s"%(self.QUEUE))
+            self.log("Got queue %s"%(AMQ_QUEUE))
 
-            promise = self.client.basic_consume(queue=self.QUEUE, prefetch_count=1)
+            promise = self.client.basic_consume(queue=AMQ_QUEUE, prefetch_count=1)
             while True:
                 result = self.client.wait(promise)
                 try:
