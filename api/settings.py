@@ -18,7 +18,7 @@ DATABASES = {
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
-    'semantic': { 'NAME': 'http://wiki.urlab.be/api.php?action=ask&query='}
+    'semantic': {'NAME': 'http://wiki.urlab.be/api.php?action=ask&query='}
 }
 
 # Local time zone for this installation. Choices can be found here:
@@ -75,7 +75,7 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -85,7 +85,7 @@ SECRET_KEY = 'w6rkh2j)uybl+$_y+m*q52w%uf^ds&amp;^c34mugydm*(6e=ho69m'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    #'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     'devserver',
     'music',
     #'wiki',
-    'wikiapi',
+    'django_semantic_mediawiki',
     'rest_framework',
     'meteo',
     # Uncomment the next line to enable the admin:

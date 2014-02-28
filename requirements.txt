@@ -6,3 +6,4 @@ django_chartit
 simplejson
 puka
 pytz
+django-semantic-mediawiki

@@ -1,8 +1,9 @@
 from django.db import models
-from wikiapi.models import WikiModel, WikiCharField
+from django_semantic_mediawiki.models import WikiModel, WikiCharField
 
 from datetime import datetime
 import pytz
+
 
 class Event(WikiModel):
 
@@ -23,7 +24,6 @@ class Event(WikiModel):
 
         if not self.event_date is None:
             self.event_date = datetime.utcfromtimestamp(float(int(self.event_date))).replace(tzinfo=pytz.timezone("Europe/Brussels"))
-
 
     def __unicode__(self):
         return self.name
